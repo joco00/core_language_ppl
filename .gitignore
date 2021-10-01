@@ -127,3 +127,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+#other
+*.pdf
+*.student
+*.pyc
+.vscode/
+.idea/

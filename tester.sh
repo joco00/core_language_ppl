@@ -4,7 +4,7 @@ runner=$1
 
 if test -f main.py
 then
-	runner="python3.7 main.py"
+	runner="python3 main.py"
 elif test -f Main.java
 then
 	echo "Attempting to compile..."
@@ -15,10 +15,10 @@ fi
 for value in {1..9}
 do
 	echo ""
-	echo "Running 0${value}.code"
-	timeout 5 ${runner} Cases/Correct/0${value}.code Cases/Correct/0${value}.data > Cases/Correct/0${value}.student
-	echo "Running diff with 0${value}.expected"
-	diff -q Cases/Correct/0${value}.expected Cases/Correct/0${value}.student
+	echo "Running ${value}.code"
+	${runner} Cases/Correct/${value}.code Cases/Correct/${value}.data > Cases/Correct/${value}.student
+	echo "Running diff with ${value}.expected"
+	diff -q Cases/Correct/${value}.expected Cases/Correct/${value}.student
 done
 
 echo "Running error cases:"
