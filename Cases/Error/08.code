@@ -1,0 +1,8 @@
+program
+	A(r) begin r=0; endfunc;
+	int x;
+begin
+	x=1;
+	begin A(1);
+	output 4;
+end

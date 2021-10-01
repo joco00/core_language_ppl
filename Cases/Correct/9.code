@@ -1,0 +1,8 @@
+program
+	A(r) begin if r<9 then input r; begin A(r); endif; endfunc;
+	int x;
+begin
+	input x;
+	begin A(x);
+	output x;
+end

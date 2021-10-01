@@ -1,0 +1,10 @@
+program
+	int x, y;
+	x(a, b) begin a = b; endfunc;
+begin
+	x = 1;
+	y = 2;
+	begin x(x, y);
+	output x;
+	output y;
+end

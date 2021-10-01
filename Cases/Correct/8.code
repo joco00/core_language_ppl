@@ -1,0 +1,12 @@
+program
+	A(r, s) begin r=0; s=0; endfunc;
+	B(r, s) begin begin A(r, s); endfunc;
+	int x;
+	int y;
+begin
+	x=1;
+	y=1;
+	begin B(x, y);
+	output x;
+	output y;
+end

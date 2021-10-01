@@ -1,0 +1,13 @@
+program
+	B(r) begin 
+		if !(r==0) then output r; r=r-1; begin B(r); endif; endfunc;
+	A(r) begin
+		if !(r==0) then output r; r=r-1; begin B(r); endif; endfunc;
+	int x;
+begin
+	x = 10;
+	begin A(x);
+end
+
+
+
