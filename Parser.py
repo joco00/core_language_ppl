@@ -45,36 +45,36 @@ class Parser:
     """
 
     def parse(self, token_list=None):
+        # setup
         if token_list:
             self.token_list = token_list
         funcName = "parse"
         self.scope.append({})
 
+        # helpers
+        ft = self.frontToken
+        r = self.root
+
         # program
-        self.root + self.terminal(Core.PROGRAM, funcName)
+        r + self.terminal(Core.PROGRAM, funcName)
 
         # <decl-seq>
-        while self.frontToken(funcName) is not Core.BEGIN:
-            if self.frontToken(funcName) is Core.INT:
-                self.root + self.getNonTerminal("<decl>")
+        while ft(funcName) is not Core.BEGIN:
+            if ft(funcName) is Core.INT:
+                r + self.getNonTerminal("<decl>")
             else:
-                self.root + self.getNonTerminal("<decl-func>")
+                r + self.getNonTerminal("<decl-func>")
 
         # begin
-        self.root + self.terminal(Core.BEGIN, funcName)
+        r + self.terminal(Core.BEGIN, funcName)
 
         # <stmt-seq>
-        while self.frontToken(funcName) not in [
-            Core.END,
-            Core.ENDIF,
-            Core.ENDWHILE,
-            # Core.ELSE,
-        ]:
-            self.root + self.getNonTerminal("<stmt>")
+        while ft(funcName) not in [Core.END, Core.ENDIF, Core.ENDWHILE]:
+            r + self.getNonTerminal("<stmt>")
 
         # end
-        self.root + self.terminal(Core.END, funcName)
-        return self.root
+        r + self.terminal(Core.END, funcName)
+        return r
 
     def decl(self):
         funcName = "decl"
@@ -143,20 +143,24 @@ class Parser:
         funcName = "stmt"
         self.spaces += 1
 
-        if type(self.token_list[0]) is str:
-            n + self.getNonTerminal("<assign>")
-        elif self.token_list[0] is Core.IF:
-            n + self.getNonTerminal("<if>")
-        elif self.token_list[0] is Core.WHILE:
-            n + self.getNonTerminal("<loop>")
-        elif self.token_list[0] is Core.INPUT:
-            n + self.getNonTerminal("<in>")
-        elif self.token_list[0] is Core.OUTPUT:
-            n + self.getNonTerminal("<out>")
-        elif self.token_list[0] is Core.INT:
-            n + self.getNonTerminal("<decl>")
-        elif self.token_list[0] is Core.BEGIN:
-            n + self.getNonTerminal("<func>")
+        # helpers
+        tl = self.token_list[0]
+        gnt = self.getNonTerminal
+
+        if type(tl) is str:
+            n + gnt("<assign>")
+        elif tl is Core.IF:
+            n + gnt("<if>")
+        elif tl is Core.WHILE:
+            n + gnt("<loop>")
+        elif tl is Core.INPUT:
+            n + gnt("<in>")
+        elif tl is Core.OUTPUT:
+            n + gnt("<out>")
+        elif tl is Core.INT:
+            n + gnt("<decl>")
+        elif tl is Core.BEGIN:
+            n + gnt("<func>")
         else:
             self.terminal(
                 [str, Core.IF, Core.WHILE, Core.INPUT, Core.OUTPUT, Core.INT], funcName
@@ -504,25 +508,26 @@ class Parser:
     """
 
     def addTerminalStr(self, typ):
+        psa = self.program_str.append
 
         if typ == "program":
-            self.program_str.append("program")
+            psa("program")
         elif typ in ["begin", "then"]:
             self.currentStr += " " + typ
-            self.program_str.append("  " * (len(self.scope) - 1) + self.currentStr)
+            psa("  " * (len(self.scope) - 1) + self.currentStr)
             self.currentStr = ""
         elif typ == "else":
             # self.program_str.append('  ' * len(self.scope) + self.currentStr)
-            self.program_str.append("  " * (len(self.scope) - 1) + "else")
+            psa("  " * (len(self.scope) - 1) + "else")
             self.currentStr = ""
         elif typ == "end":
-            self.program_str.append("  " * len(self.scope) + self.currentStr)
-            self.program_str.append("end")
+            psa("  " * len(self.scope) + self.currentStr)
+            psa("end")
         elif typ == "or":
             self.currentStr += f" {typ} "
         elif typ == ";":
             self.currentStr += typ
-            self.program_str.append("  " * len(self.scope) + self.currentStr)
+            psa("  " * len(self.scope) + self.currentStr)
             self.currentStr = ""
         elif typ in ["if", "int", "output", "input"]:
             self.currentStr += typ + " "
